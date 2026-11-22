@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101812">
+  <title>Market Atlas — company explorer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Market Atlas home"><span class="brand-icon">M</span><span>MARKET ATLAS</span></a>
+      <span class="live-note"><i></i> Company research</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">MARKET RESEARCH, AT A GLANCE</p>
+        <h1>Know the company<br><span>behind the ticker.</span></h1>
+        <p class="hero-copy">Explore company profiles, market data, financial statements, price history, and recent headlines.</p>
+      </section>
+
+      <section class="search-panel" aria-label="Company search">
+        <div class="search-row">
+          <label class="search-field">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <span class="visually-hidden">Company name or ticker symbol</span>
+            <input id="search-input" type="search" placeholder="Search a company or ticker (e.g. MSFT)" autocomplete="off" spellcheck="false">
+          </label>
+          <button id="search-button" class="button primary" type="button">Search companies <span aria-hidden="true">↗</span></button>
+        </div>
+        <div id="search-status" class="inline-status" role="status" aria-live="polite">Enter a Finnhub API key below, then search for a company.</div>
+        <div id="search-results" class="search-results hidden" aria-label="Search results"></div>
+        <details class="key-disclosure">
+          <summary><span class="key-dot"></span><span id="key-summary">Add your Finnhub API key</span><span class="summary-chevron" aria-hidden="true">⌄</span></summary>
+          <div class="key-content">
+            <label for="api-key">Finnhub API key</label>
+            <div class="key-row">
+              <input id="api-key" type="password" placeholder="Paste your key for this session" autocomplete="off" spellcheck="false">
+              <button id="key-toggle" class="button quiet" type="button" aria-label="Show API key">Show</button>
+              <button id="key-clear" class="button quiet" type="button">Clear</button>
+            </div>
+            <p>Your key is held in memory only and is sent directly to Finnhub for requests. It is not saved in this app or browser storage. Get a key from <a href="https://finnhub.io/register" target="_blank" rel="noopener noreferrer">Finnhub</a>.</p>
+            <p class="plan-note">Data availability, exchange coverage, delays, and request limits depend on your Finnhub plan. Free keys have usage limits; searches and each company view make API requests.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="company-view" class="hidden" aria-live="polite">
+        <div id="company-error" class="banner hidden" role="alert"></div>
+        <section class="company-heading">
+          <div class="company-title-wrap">
+            <div id="company-logo" class="company-logo" aria-hidden="true">?</div>
+            <div>
+              <p id="company-exchange" class="eyebrow">COMPANY OVERVIEW</p>
+              <h2 id="company-name">Company</h2>
+              <p id="company-meta" class="company-meta"></p>
+            </div>
+          </div>
+          <a id="company-site" class="site-link hidden" target="_blank" rel="noopener noreferrer">Company website ↗</a>
+        </section>
+
+        <section class="quote-strip" aria-label="Stock quote">
+          <div class="quote-main">
+            <span class="label">LAST PRICE</span>
+            <div><strong id="quote-price">—</strong><span id="quote-change" class="change">—</span></div>
+            <span id="quote-time" class="subtle">Latest quote</span>
+          </div>
+          <div class="quote-item"><span class="label">OPEN</span><strong id="quote-open">—</strong></div>
+          <div class="quote-item"><span class="label">DAY HIGH</span><strong id="quote-high">—</strong></div>
+          <div class="quote-item"><span class="label">DAY LOW</span><strong id="quote-low">—</strong></div>
+          <div class="quote-item"><span class="label">PREV. CLOSE</span><strong id="quote-prev">—</strong></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">THE BUSINESS</p><h2>Company profile</h2></div>
+            <span id="profile-status" class="section-status"></span>
+          </div>
+          <p id="profile-description" class="description"></p>
+          <div id="profile-grid" class="profile-grid"></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">VALUATION & PERFORMANCE</p><h2>Key metrics</h2></div>
+            <span id="metrics-status" class="section-status"></span>
+          </div>
+          <div id="metrics-grid" class="metrics-grid"></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div><p class="eyebrow">PRICE PERFORMANCE</p><h2>Historical price</h2></div>
+            <span id="chart-status" class="section-status"></span>
+          </div>
+          <div id="chart-summary" class="chart-summary"></div>
+          <div id="chart" class="chart-wrap"></div>
+          <div class="chart-legend"><span>Daily close · past 12 months</span><span id="chart-range"></span></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-heading financial-heading">
+            <div><p class="eyebrow">REPORTED FILINGS</p><h2>Financial statements</h2></div>
+            <div class="selectors">
+              <label class="visually-hidden" for="financial-year">Fiscal year</label>
+              <select id="financial-year" aria-label="Fiscal year"></select>
+              <label class="visually-hidden" for="financial-type">Statement type</label>
+              <select id="financial-type" aria-label="Statement type">
+                <option value="ic">Income statement</option>
+                <option value="bs">Balance sheet</option>
+                <option value="cf">Cash flow</option>
+              </select>
+            </div>
+          </div>
+          <p id="financial-status" class="section-status"></p>
+          <div id="financials" class="table-wrap"></div>
+          <p class="footnote">Reported values and labels are provided by Finnhub from company filings. Availability and reporting currency vary by company.</p>
+        </section>
+
+        <section class="section-block news-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">WHAT'S HAPPENING</p><h2>Recent company news</h2></div>
+            <span id="news-status" class="section-status"></span>
+          </div>
+          <div id="news-list" class="news-list"></div>
+        </section>
+      </section>
+    </main>
+    <footer><span>Market Atlas</span><span>Market data provided by Finnhub · For research only, not investment advice.</span></footer>
+  </div>
+</body>
+</html>
