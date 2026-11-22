@@ -26,4 +26,4 @@ This is a static site: it has no build step or server-side code. Deploy the cont
 
 Do not add a Finnhub key to the site files or hosting settings. Each visitor enters their own key in the page; requests go from their browser directly to Finnhub. The key is visible to that visitor in their browser's network tools while in use, so this client-only setup is intended for personal use, not a shared service that uses one private key for everyone.
 
-Choose a hosting provider before publishing. The site has not been uploaded, and there is no public URL yet.
+Published site: [Market Atlas](https://gaur836.github.io/market-atlas/). The source is in the public [market-atlas repository](https://github.com/gaur836/market-atlas). No Finnhub API key is bundled with the site.
